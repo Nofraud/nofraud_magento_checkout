@@ -14,43 +14,38 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
         'error',
     ];
 
-    const PROD_API_SOURCE_JS = "https://cdn-checkout.nofraud.com/scripts/nf-src-magento.js";
+    // BASE URLS
+    const DEV_CHECKOUT_API_BASE_URL = "https://dynamic-checkout-api-staging2.nofraud-test.com";
+    const STAG_CHECKOUT_API_BASE_URL = "https://dynamic-api-checkout-qe2.nofraud-test.com";
+    const PROD_CHECKOUT_API_BASE_URL = "https://dynamic-api-checkout.nofraud.com";
 
-    const STAG_API_SOURCE_JS = "https://cdn-checkout-qe2.nofraud-test.com/scripts/nf-src-magento.js";
-
-    const DEV_API_SOURCE_JS = "https://dynamic-checkout-test.nofraud-test.com/latest/scripts/nf-src-magento.js";
-
-    const PROD_REFUND_API_URL = "https://dynamic-api-checkout.nofraud.com/api/v2/hooks/refund/";
-
-    //const STAG_REFUND_API_URL = "https://dynamic-checkout-api-staging2.nofraud-test.com/api/v1/hooks/refund/";
-    const STAG_REFUND_API_URL = "https://dynamic-api-checkout-qe2.nofraud-test.com/api/v2/hooks/refund/";
-
-    const DEV_REFUND_API_URL = "https://dynamic-checkout-api-staging2.nofraud-test.com/api/v2/hooks/refund/";
-
-    const PROD_CAPTURE_API_URL = "https://dynamic-api-checkout.nofraud.com/api/v2/hooks/capture/";
-
-    //const STAG_CAPTURE_API_URL = "https://dynamic-checkout-api-staging2.nofraud-test.com/api/v1/hooks/capture/";
-    const STAG_CAPTURE_API_URL = "https://dynamic-checkout-api-qe2.nofraud-test.com/api/v2/hooks/capture/";
-
-    const DEV_CAPTURE_API_URL = "https://dynamic-checkout-api-staging2.nofraud-test.com/api/v2/hooks/capture/";
-
+    // PORTAL ENDPOINTS
+    const DEV_PORTAL_BASE_URL = "https://portal-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
+    const STAG_PORTAL_BASE_URL = "https://portal-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
     const PROD_PORTAL_BASE_URL = "https://portal.nofraud.com/api/v1/transaction-update/cancel-transaction";
 
-    const STAG_PORTAL_BASE_URL = "https://portal-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
-
-    const DEV_PORTAL_BASE_URL = "https://portal-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
-
-    const PROD_NFAPI_BASE_URL = "https://api.nofraud.com/status_by_url/";
-
-    const STAG_NFAPI_BASE_URL = "https://api-qe2.nofraud-test.com/status_by_url/";
-
+    // NFAPI ENDPOINTS
     const DEV_NFAPI_BASE_URL = "https://api-qe2.nofraud-test.com/status_by_url/";
+    const STAG_NFAPI_BASE_URL = "https://api-qe2.nofraud-test.com/status_by_url/";
+    const PROD_NFAPI_BASE_URL = "https://api.nofraud.com/status_by_url/";
+	
+    // CHECKOUT API ENDPOINTS
+    const DEV_REFUND_API_URL = self::DEV_CHECKOUT_API_BASE_URL . "/api/v2/hooks/refund/";
+    const STAG_REFUND_API_URL = self::STAG_CHECKOUT_API_BASE_URL . "/api/v2/hooks/refund/";
+    const PROD_REFUND_API_URL = self::PROD_CHECKOUT_API_BASE_URL . "/api/v2/hooks/refund/";
 
-    const PROD_NFAPI_MER_BASE_URL = "https://api.nofraud.com/api/v2/merchants/";
-
-    const STAG_NFAPI_MER_BASE_URL = "https://api-qe2.nofraud-test.com/api/v2/merchants/";
-
-    const DEV_NFAPI_MER_BASE_URL = "https://dynamic-checkout-api-staging2.nofraud-test.com/api/v2/merchants/";
+    const DEV_CAPTURE_API_URL = self::DEV_CHECKOUT_API_BASE_URL . "/api/v2/hooks/capture/";
+    const STAG_CAPTURE_API_URL = self::STAG_CHECKOUT_API_BASE_URL . "/api/v2/hooks/capture/";
+    const PROD_CAPTURE_API_URL = self::PROD_CHECKOUT_API_BASE_URL . "/api/v2/hooks/capture/";
+	
+    const DEV_NFAPI_MER_BASE_URL = self::DEV_CHECKOUT_API_BASE_URL . "/api/v2/merchants/";
+    const STAG_NFAPI_MER_BASE_URL = self::STAG_CHECKOUT_API_BASE_URL . "/api/v2/merchants/";
+    const PROD_NFAPI_MER_BASE_URL = self::PROD_CHECKOUT_API_BASE_URL . "/api/v2/merchants/";
+	
+    // CHECKOUT APP URLS
+    const DEV_API_SOURCE_JS = "https://dynamic-checkout-test.nofraud-test.com/latest/scripts/nf-src-magento.js";
+    const STAG_API_SOURCE_JS = "https://cdn-checkout-qe2.nofraud-test.com/scripts/nf-src-magento.js";
+    const PROD_API_SOURCE_JS = "https://cdn-checkout.nofraud.com/scripts/nf-src-magento.js";
 
     const ORDER_STATUSES = 'nofraud/order_statuses';
 
