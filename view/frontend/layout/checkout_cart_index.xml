@@ -9,5 +9,10 @@
 				<argument name="nofraudviewmodel" xsi:type="object">NoFraud\Checkout\ViewModel\NoFraud</argument>
 	       </arguments>
 		</referenceBlock>
+		<referenceBlock name="checkout.cart.methods.onepage.bottom.php-cart">
+		   <action method="setTemplate" ifconfig="nofraud/general/hyva_based_theme">
+			   <argument name="template" xsi:type="string">NoFraud_Checkout::php-cart/onepage-link.phtml</argument>
+		   </action>
+		</referenceBlock>
 	</body>
 </page>
