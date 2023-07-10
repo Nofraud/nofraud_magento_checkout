@@ -4,5 +4,10 @@
 		<referenceContainer name="after.body.start">
 			<block class="NoFraud\Checkout\Block\Customcomponents" cacheable="false" name="customcomponents" as="customcomponents" template="NoFraud_Checkout::js/customcomponents.phtml" ifconfig="nofraud/general/enabled" />
 		</referenceContainer>
+		<referenceBlock name="cart-drawer">
+    		<action method="setTemplate" ifconfig="nofraud/general/hyva_based_theme">
+        		<argument name="template" xsi:type="string">NoFraud_Checkout::html/cart/cart-drawer.phtml</argument>
+    		</action>
+		</referenceBlock>
 	</body>
 </page>
