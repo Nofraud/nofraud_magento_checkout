@@ -335,7 +335,7 @@ class OrderFraudStatus
                 CURLOPT_POSTFIELDS => json_encode($data),
                 CURLOPT_HTTPHEADER => array(
                     "Content-Type: application/json",
-                    "X-NF-HOOK-AUTH: {$nfToken}"
+                    "x-nf-api-token: {$nfToken}"
                 ),
             ));
             $response = curl_exec($curl);
