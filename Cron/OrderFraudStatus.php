@@ -317,13 +317,9 @@ class OrderFraudStatus
         $returnsFund = ["success" => false];
 
         $apiUrl = $this->dataHelper->getRefundApiUrl();
-        $apikey = $this->dataHelper->getRefundApiKey();
-        $logger->info($apikey);
+        $nfToken= $this->dataHelper->getNofrudCheckoutAppNfToken();
         $logger->info($apiUrl);
-        //$apiUrl = "https://dynamic-checkout-api-staging2.nofraud-test.com/api/v1/hooks/refund/megento_merchant_1";
-        //$apikey = "Bd4jKQ2qrzjCRdxW28";
-
-
+        
         try {
             $curl = curl_init();
             curl_setopt_array($curl, array(
@@ -338,7 +334,7 @@ class OrderFraudStatus
                 CURLOPT_POSTFIELDS => json_encode($data),
                 CURLOPT_HTTPHEADER => array(
                     "Content-Type: application/json",
-                    "X-NF-HOOK-AUTH: {$apikey}"
+                    "x-nf-api-token: {$nfToken}"
                 ),
             ));
             $response = curl_exec($curl);
