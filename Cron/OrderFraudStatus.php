@@ -316,8 +316,8 @@ class OrderFraudStatus
         $returnsFund = [];
         $returnsFund = ["success" => false];
 
+        $apiUrl = $this->dataHelper->getRefundApiUrl();
         $nfToken= $this->dataHelper->getNofrudCheckoutAppNfToken();
-        $apikey = $this->dataHelper->getRefundApiKey();
         $logger->info($apikey);
         $logger->info($apiUrl);
         
