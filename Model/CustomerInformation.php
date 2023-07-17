@@ -12,11 +12,18 @@ use Magento\Vault\Api\PaymentTokenManagementInterface;
 
 class CustomerInformation implements CustomerInformationInterface
 {
+    const DATE_FORMAT = 'm/d/Y';
+
     protected $request;
+
     protected $customerRepository;
+
     protected $customerLog;
+
     protected $orderCollectionFactory;
+
     protected $customerCollection;
+
     protected $paymenttokenmanagement;
 
     public function __construct(
@@ -46,9 +53,9 @@ class CustomerInformation implements CustomerInformationInterface
             $id            = $customer->getId();
             $email         = $customer->getEmail();
             $createdAt     = $customer->getCreatedAt();
-            $createdDate   = date('m/d/Y', strtotime($createdAt));
+            $createdDate   = date(self::DATE_FORMAT, strtotime($createdAt));
             $lastLoginAt   = $this->customerLog->get($customerId);
-            $lastLoginDate = date('m/d/Y', strtotime($lastLoginAt->getLastLoginAt()));
+            $lastLoginDate = date(self::DATE_FORMAT, strtotime($lastLoginAt->getLastLoginAt()));
 
             // Retrieve customer order collection
             $orderCollection = $this->orderCollectionFactory->create()
@@ -63,7 +70,7 @@ class CustomerInformation implements CustomerInformationInterface
                 $lastOrder     = $orderCollection->getFirstItem();
                 $remoteIp      = $lastOrder->getRemoteIp();
                 $lastOrderDate = $lastOrder->getCreatedAt();
-                $lastOrderDateFormatted = date('m/d/Y', strtotime($lastOrderDate));
+                $lastOrderDateFormatted = date(self::DATE_FORMAT, strtotime($lastOrderDate));
                 $totalOrders       = $orderCollection->getSize();
                 $totalOrderAmounts = $orderCollection->getColumnValues('grand_total');
                 $totalOrderAmount  = array_sum($totalOrderAmounts);
@@ -78,6 +85,8 @@ class CustomerInformation implements CustomerInformationInterface
             $customerInformation = array();
             foreach ($customerInformationAll as $customerInfo) {
                 unset($customerInfo['password_hash']);
+                unset($customerInfo['rp_token']);
+                unset($customerInfo['rp_token_created_at']);
                 $customerInformation[] = $customerInfo;
             }
 
@@ -89,7 +98,7 @@ class CustomerInformation implements CustomerInformationInterface
                 foreach ($cardList as $card) {
                     $customerUsedCards = $card->getData();
                     end($customerUsedCards);
-                    $customerLastUsedCardDate = date('m/d/Y', strtotime($customerUsedCards['created_at']));
+                    $customerLastUsedCardDate = date(self::DATE_FORMAT, strtotime($customerUsedCards['created_at']));
                 }
             }
 
