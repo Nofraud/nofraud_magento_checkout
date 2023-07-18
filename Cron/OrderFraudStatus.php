@@ -318,7 +318,6 @@ class OrderFraudStatus
 
         $apiUrl = $this->dataHelper->getRefundApiUrl();
         $nfToken= $this->dataHelper->getNofrudCheckoutAppNfToken();
-        $logger->info($apikey);
         $logger->info($apiUrl);
         
         try {
