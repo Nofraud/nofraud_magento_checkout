@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Magento\Checkout\Block\Onepage\Link;
+use Magento\Framework\Escaper;
+use NoFraud\Checkout\ViewModel\NoFraud;
+
+/** @var Escaper $escaper */
+/** @var Link $block */
+/** @var \Hyva\Theme\Model\ViewModelRegistry $viewModels */
+
+$viewModel = $viewModels->require(NoFraud::class);
+$isNofraudenabled = (int) $viewModel->getConfig();
+?>
+<script>
+    function initNfCheckout() {
+        return {
+            nfParams: {},
+            getNfData(data) {
+                var customer = data.customer;
+                var cartId = data.nofrudcheckout.quote_id;
+                if (cartId) {
+                    param = [];
+                    param['data-nf-access-token'] = customer.fullname && customer.firstname ? window.nofraudcheckout_accesstokenforcustomer : window.nofraudcheckout_accesstokenfornotlogin;
+                    param['data-nf-cart-id'] = cartId;
+                    param['data-nf-customer-is-logged-in'] = customer.fullname && customer.firstname ? 1 : 0;
+                    param['data-nf-merchant-id'] = window.nofraudcheckout_merchant;
+                    param['data-nf-store-url'] = BASE_URL;
+                    this.nfParams = param;
+                }
+            },
+            openpopup() {
+                if (this.nfParams) {
+                    return nfOpenCheckout(this.nfParams);
+                }
+            }
+        }
+    }
+</script>
+<?php if ($isNofraudenabled) : ?>
+    <?php if ($block->isPossibleOnepageCheckout()) : ?>
+        <div x-data="initNfCheckout()" @private-content-loaded.window="getNfData($event.detail.data)" class="action nofraud checkout">
+            <a title="<?= $escaper->escapeHtmlAttr(__('Proceed to Checkout')) ?>" class="btn btn-primary rounded text-lg font-medium py-4 px-10 my-4 checkout justify-center text-center" id="checkout-link-button" @click="openpopup()">
+                <?= $escaper->escapeHtml(__('Proceed to Checkout')) ?>
+            </a>
+        </div>
+    <?php endif ?>
+<?php else : ?>
+    <?php if ($block->isPossibleOnepageCheckout()) : ?>
+        <a @click.prevent.stop="$dispatch('toggle-authentication',
+        {url: '<?= $escaper->escapeHtmlAttr($escaper->escapeUrl($block->getCheckoutUrl())) ?>'});" href="<?= $escaper->escapeHtmlAttr($escaper->escapeUrl($block->getCheckoutUrl())) ?>" title="<?= $escaper->escapeHtmlAttr(__('Proceed to Checkout')) ?>" class="btn btn-primary rounded text-lg font-medium py-4 px-10 my-4 checkout justify-center text-center" id="checkout-link-button">
+            <?= $escaper->escapeHtml(__('Proceed to Checkout')) ?>
+        </a>
+    <?php endif ?>
+<?php endif ?>
