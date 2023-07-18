@@ -17,4 +17,5 @@
         <plugin name="nf_checkout_phone_number_Validator" type="NoFraud\Checkout\Plugin\Block\Checkout\PhonePlugin" sortOrder="10"/>
     </type> -->
 	<preference for="NoFraud\Checkout\Api\PhonenumberInterface" type="NoFraud\Checkout\Model\PhonenumberData" />
+	<preference for="NoFraud\Checkout\Api\CustomerInformationInterface" type="NoFraud\Checkout\Model\CustomerInformation"/>	
 </config>
