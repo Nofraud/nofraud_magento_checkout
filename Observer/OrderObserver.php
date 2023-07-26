@@ -106,6 +106,13 @@ class OrderObserver implements ObserverInterface
                 ]
             );
 
+            $this->_eventManager->dispatch(
+                'nofraud_checkout_success_action',
+                [
+                    'order_ids' => [$this->_checkoutSession->getLastOrderId()],
+                    'order' => $order
+                ]
+            );
             $logger->info('observer for order : ' . $orderId);
 
             /* $paymentActions = $this->getConfig(self::XML_PATH_PAYMENT_ACTION);
