@@ -15,4 +15,7 @@
     <event name="admin_system_config_changed_section_nofraud">
         <observer name="nofraud_admin_system_config_changed_section_nofraud" instance="NoFraud\Checkout\Observer\ConfigChangeObserver"/>
     </event>
+    <event name="nofraud_checkout_success_action">
+        <observer name="nofraud_checkout_nofraud_checkout_success_action" instance="NoFraud\Checkout\Observer\CheckoutSuccessFbPixelEvent" />
+    </event>
 </config>
