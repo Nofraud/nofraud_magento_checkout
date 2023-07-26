@@ -1,3 +1,21 @@
+# [1.0.0](https://github.com/Nofraud/nofraud_magento_checkout/compare/v0.1.1...v1.0.0) (2023-07-26)
+
+
+### Bug Fixes
+
+* **cron:** Replace X-NF-HOOK-AUTH with x-nf-api-token on refund call ([aa7ee68](https://github.com/Nofraud/nofraud_magento_checkout/commit/aa7ee681c858c4e3df7f22d1645bc4a9b5695464))
+
+
+### Features
+
+* worked on getting customer specific information endpoints ([99c8b6d](https://github.com/Nofraud/nofraud_magento_checkout/commit/99c8b6dc90a2bb5f22e9b120c9fc9c2dbc182ed3))
+* worked on the hyva compatible extension template customization and backend configuration ([f089915](https://github.com/Nofraud/nofraud_magento_checkout/commit/f089915ce20a15bd16aa1d4c06a5dfd330b5cfb0))
+
+
+### BREAKING CHANGES
+
+* This commit adds compatibility for the Hyva theme. A new setting will need to be configured in the admin to ensure functionality.
+
 ## [0.1.1](https://github.com/Nofraud/nofraud_magento_checkout/compare/v0.1.0...v0.1.1) (2023-05-25)
 
 

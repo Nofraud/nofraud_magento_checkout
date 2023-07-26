@@ -4,17 +4,17 @@
     "require": {
         "php": ">=7.4.0 <=8.2.99"
     },
-	"type": "magento2-module",
+    "type": "magento2-module",
     "license": [
         "Commercial"
     ],
-	"version": "1.0.2",
-	"autoload": {
-		"files": [
-		  "registration.php"
-		],
-		"psr-4": {
-		  "NoFraud\\Checkout\\": ""
-		}
-	}
+    "version": "1.0.0",
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "NoFraud\\Checkout\\": ""
+        }
+    }
 }
