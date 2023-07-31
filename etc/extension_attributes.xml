@@ -9,4 +9,7 @@
     <extension_attributes for="Magento\Quote\Api\Data\CartItemInterface">
         <attribute code="image_url" type="string" />
     </extension_attributes>
+    <extension_attributes for="Magento\Quote\Api\Data\CartInterface">
+        <attribute code="nf_giftcard_quote" type="NoFraud\Checkout\Api\Data\GiftCardQuoteInterface" />
+    </extension_attributes>
 </config>
