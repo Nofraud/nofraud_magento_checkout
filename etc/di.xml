@@ -17,4 +17,12 @@
 	<type name="Magento\Quote\Api\CartRepositoryInterface">
 		<plugin name="GiftCardQuoteExtension" type="NoFraud\Checkout\Plugin\Quote\CartRepositoryPlugin" />
 	</type>
+	<preference for="NoFraud\Checkout\Api\UpdateTransactionResultInterface" type="NoFraud\Checkout\Model\UpdateTransactionResult"/>
+	<type name="Magento\Framework\Console\CommandList">
+       <arguments>
+           <argument name="commands" xsi:type="array">
+               <item name="nofraud_update_orders" xsi:type="object">NoFraud\Checkout\Console\UpdateOrders</item>
+           </argument>
+       </arguments>
+   </type>
 </config>

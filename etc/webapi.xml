@@ -84,4 +84,10 @@
             <resource ref="Apptrian_FacebookPixel::config_system"/>
         </resources>
     </route>
+	<route url="/V1/nofraudcheckout/updatetransactionresult" method="POST">
+        <service class="NoFraud\Checkout\Api\UpdateTransactionResultInterface" method="updateTransactionResult"/>
+        <resources>
+            <resource ref="Magento_Sales::sales"/>
+        </resources>
+    </route>
 </routes>
