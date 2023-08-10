@@ -18,6 +18,8 @@
                 <column xsi:type="varchar" name="nofraud_checkout_status" nullable="false" length="255"
                 comment="NoFraud Checkout screened order status"/>
                 <column xsi:type="text" name="nofraudcheckout" comment="NoFraudCheckout"/>
+                <column xsi:type="varchar" name="nofraud_transaction_id" nullable="true"
+                comment="NoFraud Transaction ID"/>
         </table>
         <table name="sales_order_grid" resource="sales" engine="innodb" comment="Sales Flat Order Grid">
                 <column xsi:type="boolean" name="nofraud_checkout_screened" nullable="false" 

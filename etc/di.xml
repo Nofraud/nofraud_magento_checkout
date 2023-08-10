@@ -18,4 +18,12 @@
     </type> -->
 	<preference for="NoFraud\Checkout\Api\PhonenumberInterface" type="NoFraud\Checkout\Model\PhonenumberData" />
 	<preference for="NoFraud\Checkout\Api\CustomerInformationInterface" type="NoFraud\Checkout\Model\CustomerInformation"/>	
+	<preference for="NoFraud\Checkout\Api\UpdateTransactionResultInterface" type="NoFraud\Checkout\Model\UpdateTransactionResult"/>
+	<type name="Magento\Framework\Console\CommandList">
+       <arguments>
+           <argument name="commands" xsi:type="array">
+               <item name="nofraud_update_orders" xsi:type="object">NoFraud\Checkout\Console\UpdateOrders</item>
+           </argument>
+       </arguments>
+   </type>
 </config>
