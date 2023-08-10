@@ -28,30 +28,42 @@ class SetOrderAttributesData implements SetOrderAttributes
 		$logger->info(json_encode($data));
 		
         $storeId 	= $this->storeManager->getStore()->getId();
-		$order 		= $this->order->load($data["order_id"]);
-        $this->appEmulation->startEnvironmentEmulation($storeId, \Magento\Framework\App\Area::AREA_FRONTEND, true);
-		try{
-            $logger->info(" order state ".$order->getState());
-			$order->setData('nofraudcheckout',json_encode($data));
-            $order->setStatus($order->getState());
-            $order->setData('status',$order->getState());
-			$order->save();
-			$response = [
-                [
-                    "code" => 'success',
-                    "message" => 'update data for order '. $order->getId() .' successful !',
-                ],
-            ];
-        }catch(\Exception $e) {
-			$response = [
+        $orderId    = $data["order_id"] ?? "";
+
+        if( isset($orderId) && !empty($orderId) ){
+		    $order 	= $this->order->load($orderId);
+            $this->appEmulation->startEnvironmentEmulation($storeId, \Magento\Framework\App\Area::AREA_FRONTEND, true);
+            try{
+                $nfTransactionId = $data["transaction_id"];
+                $logger->info(" order state ".$order->getState());
+                $order->setData('nofraud_transaction_id',$nfTransactionId);
+                $order->setData('nofraudcheckout',json_encode($data));
+                $order->setStatus($order->getState());
+                $order->setData('status',$order->getState());
+                $order->save();
+                $response = [
+                    [
+                        "code" => 'success',
+                        "message" => 'update data for order '. $order->getId() .' successful !',
+                    ],
+                ];
+            }catch(\Exception $e) {
+                $response = [
+                    [
+                        "code" => 'error',
+                        "message" => $e->getMessage(),
+                    ],
+                ];
+            }
+            $this->appEmulation->stopEnvironmentEmulation();
+        }else {
+            $response = [
                 [
                     "code" => 'error',
-                    "message" => $e->getMessage(),
+                    "message" => "Missing required parameters",
                 ],
             ];
         }
-        $this->appEmulation->stopEnvironmentEmulation();
-		
 		return $response;
     }
 }

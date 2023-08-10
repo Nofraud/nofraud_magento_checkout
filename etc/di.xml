@@ -18,4 +18,17 @@
     </type> -->
 	<preference for="NoFraud\Checkout\Api\PhonenumberInterface" type="NoFraud\Checkout\Model\PhonenumberData" />
 	<preference for="NoFraud\Checkout\Api\CustomerInformationInterface" type="NoFraud\Checkout\Model\CustomerInformation"/>	
+	<preference for="NoFraud\Checkout\Api\FacebookPixelInterface" type="NoFraud\Checkout\Model\FacebookPixelCheckoutEvent"/>
+	<preference for="Route\Route\Helper\Data" type="NoFraud\Checkout\Helper\RouteData" />
+	<type name="Magento\Quote\Api\CartRepositoryInterface">
+		<plugin name="GiftCardQuoteExtension" type="NoFraud\Checkout\Plugin\Quote\CartRepositoryPlugin" />
+	</type>
+	<preference for="NoFraud\Checkout\Api\UpdateTransactionResultInterface" type="NoFraud\Checkout\Model\UpdateTransactionResult"/>
+	<type name="Magento\Framework\Console\CommandList">
+       <arguments>
+           <argument name="commands" xsi:type="array">
+               <item name="nofraud_update_orders" xsi:type="object">NoFraud\Checkout\Console\UpdateOrders</item>
+           </argument>
+       </arguments>
+   </type>
 </config>
