@@ -329,6 +329,7 @@ class UpdateTransactionResult implements UpdateTransactionResultInterface
                     error_log("\n state " . $newState . " <=> " . $order->getId(), 3, BP . "/var/log/nf_order_status.log");
                     $order->setStatus($newStatus)->setState($newState);
                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                     $order->save();
                 } else if ($noFraudStatus == "fail" || $noFraudStatus == "fraudulent" || $noFraudStatus == "fraud") {
                     if (isset($settings['shouldAutoRefund']) && (empty($manualCapture) || $manualCapture == false)) {
@@ -340,6 +341,7 @@ class UpdateTransactionResult implements UpdateTransactionResultInterface
                             if ($responseArray && isset($responseArray["success"]) && $responseArray["success"] == true) {
                                 error_log("\n success " . " <=> " . $order->getId(), 3, BP . "/var/log/nf_order_status.log");
                                 $order->setNofraudCheckoutStatus($noFraudStatus);
+                                $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                 $this->createCreditMemo($order->getId());
                                 $orderRefundedInNofraud = true;
                                 $updateOrder      = true;
@@ -369,6 +371,7 @@ class UpdateTransactionResult implements UpdateTransactionResultInterface
                         }
                     }
                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                     $order->save();
                 } else if ($noFraudStatus == "review") {
                     $newStatus  =  "Pending Payment";
@@ -376,6 +379,7 @@ class UpdateTransactionResult implements UpdateTransactionResultInterface
                     error_log("\n status " . $newStatus . " <=> " . $order->getId(), 3, BP . "/var/log/nf_order_status_review.log");
                     //$order->setStatus($newStatus)->setState($newState);
                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                     $order->save();
                 }
             }

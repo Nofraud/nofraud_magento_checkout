@@ -207,6 +207,7 @@ class OrderFraudStatus
                                     error_log("\n state ".$newState." <=> ".$order->getId(),3,BP."/var/log/cron_pass.log");
                                     $order->setStatus($newStatus)->setState($newState);
                                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                     $order->save();
                                 } else if ( $noFraudStatus == "fail" || $noFraudStatus == "fraudulent" || $noFraudStatus == "fraud" ) {
                                     if ( isset($settings['shouldAutoRefund']) && (empty($manualCapture) || $manualCapture == false) ) {
@@ -218,6 +219,7 @@ class OrderFraudStatus
                                             if($responseArray && isset($responseArray["success"]) && $responseArray["success"] == true) {
                                                 error_log("\n success "." <=> ".$order->getId(),3,BP."/var/log/cron_refund.log");
                                                 $order->setNofraudCheckoutStatus($noFraudStatus);
+                                                $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                                 $this->createCreditMemo($order->getId());
                                                 $orderRefundedInNofraud = true;
                                                 $updateOrder      = true;
@@ -246,6 +248,7 @@ class OrderFraudStatus
                                         }
                                     }
                                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                     $order->save();
                                 } else if ($noFraudStatus == "review") {
                                     $newStatus  =  "Pending Payment";
@@ -253,6 +256,7 @@ class OrderFraudStatus
                                     error_log("\n status ".$newStatus." <=> ".$order->getId(),3,BP."/var/log/cron_review.log");
                                     //$order->setStatus($newStatus)->setState($newState);
                                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                     $order->save();
                                 }
                             }
