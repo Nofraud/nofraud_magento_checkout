@@ -199,6 +199,7 @@ class OrderFraudStatus
                                     $newState   = $this->getStateFromStatus($newStatus);
                                     $order->setStatus($newStatus)->setState($newState);
                                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                     $order->save();
                                     $logger->info("\n Status Saved ".$newStatus." <=> ".$order->getId());
                                 } else if ( $noFraudStatus == "fail" || $noFraudStatus == "fraudulent" || $noFraudStatus == "fraud" ) {
@@ -208,6 +209,7 @@ class OrderFraudStatus
                                             $responseArray = json_decode($refundResponse, true);
                                             if($responseArray && isset($responseArray["success"]) && $responseArray["success"] == true) {
                                                 $order->setNofraudCheckoutStatus($noFraudStatus);
+                                                $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                                 $this->createCreditMemo($order->getId());
                                                 $orderRefundedInNofraud = true;
                                                 $updateOrder      = true;
@@ -235,12 +237,14 @@ class OrderFraudStatus
                                         }
                                     }
                                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                     $order->save();
                                 } else if ($noFraudStatus == "review") {
                                     $newStatus  =  "Pending Payment";
                                     $newState   =  "payment_review";
                                     //$order->setStatus($newStatus)->setState($newState);
                                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                     $order->save();
                                     $logger->info("\n Revevuew Status Saved ".$newStatus." <=> ".$order->getId());
                                 }
