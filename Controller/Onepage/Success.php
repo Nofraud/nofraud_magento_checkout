@@ -6,29 +6,40 @@ use Magento\Checkout\Controller\Onepage\Success as OriginalSuccess;
 
 class Success extends OriginalSuccess
 {
+    protected $order;
+
+    public function __construct(
+        \Magento\Sales\Api\Data\OrderInterface $order
+    ) {
+        $this->order = $order;
+    }
+
     public function execute()
     {
-        $orderId = $this->getRequest()->getParam('orderId');
+        $orderId = $this->getRequest()->getParam('order_id');
         $session = $this->getOnepage()->getCheckout();
-        $resultPage = $this->resultPageFactory->create();
         if ($orderId) {
-            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            $order = $objectManager->create('\Magento\Sales\Model\OrderRepository')->get($orderId);
+            $order = $this->order->load($orderId);
             $session->setLastOrderId($order->getIncrementId());
-            $session->setLastRealOrderId($order->getIncrementId());
-        } else {
-            if (!$this->_objectManager->get(\Magento\Checkout\Model\Session\SuccessValidator::class)->isValid()) {
-                return $this->resultRedirectFactory->create()->setPath('checkout/cart');
-            }
-            $session->clearQuote();
-            $this->_eventManager->dispatch(
-                'checkout_onepage_controller_success_action',
-                [
-                    'order_ids' => [$session->getLastOrderId()],
-                    'order' => $session->getLastRealOrder()
-                ]
-            );
+            $session->setLastRealOrder($order);
+            $session->setLastQuoteId($order->getQuoteId());
+            $session->setLastSuccessQuoteId($order->getQuoteId());
         }
+
+        if (!$this->_objectManager->get(\Magento\Checkout\Model\Session\SuccessValidator::class)->isValid()) {
+            return $this->resultRedirectFactory->create()->setPath('checkout/cart');
+        }
+
+        $session->clearQuote();
+
+        $resultPage = $this->resultPageFactory->create();
+        $this->_eventManager->dispatch(
+            'checkout_onepage_controller_success_action',
+            [
+                'order_ids' => [$session->getLastOrderId()],
+                'order' => $session->getLastRealOrder()
+            ]
+        );
         return $resultPage;
     }
 }
