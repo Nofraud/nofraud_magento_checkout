@@ -14,7 +14,7 @@ class Success extends OriginalSuccess
 
     public function execute()
     {
-        $orderId = $this->getRequest()->getParam('order_id');
+        $orderId = $this->getRequest()->getParam('orderId');
         $session = $this->getOnepage()->getCheckout();
         if ($orderId) {
             $order = $this->order->load($orderId);
