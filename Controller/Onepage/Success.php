@@ -1,7 +1,5 @@
 <?php
-
 namespace NoFraud\Checkout\Controller\Onepage;
-
 use Magento\Checkout\Controller\Onepage\Success as OriginalSuccess;
 
 class Success extends OriginalSuccess
