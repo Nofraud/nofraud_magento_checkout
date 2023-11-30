@@ -18,4 +18,6 @@
     </type> -->
 	<preference for="NoFraud\Checkout\Api\PhonenumberInterface" type="NoFraud\Checkout\Model\PhonenumberData" />
 	<preference for="NoFraud\Checkout\Api\CustomerInformationInterface" type="NoFraud\Checkout\Model\CustomerInformation"/>	
+	<preference for="NoFraud\Checkout\Api\FacebookPixelInterface" type="NoFraud\Checkout\Model\FacebookPixelCheckoutEvent"/>
+	<preference for="Route\Route\Helper\Data" type="NoFraud\Checkout\Helper\RouteData" />
 </config>
