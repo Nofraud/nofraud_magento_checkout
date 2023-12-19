@@ -1,11 +1,17 @@
 <?php
+
 namespace NoFraud\Checkout\Helper;
 
-class Data extends \Magento\Framework\App\Helper\AbstractHelper {
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\ResourceConnection;
 
+class Data extends AbstractHelper
+{
     protected $_config;
-
     protected $_storeManager;
+    protected $resourceConnection;
 
     protected $orderStatusesKeys = [
         'pass',
@@ -15,86 +21,46 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     ];
 
     /** 
-    * Checkout BASE URLS
+     * Checkout BASE URL Key
+     **/
+    const CHECKOUT_API_BASE_URL_KEY = "checkout_api_base_url";
+
+    /*
+    * Checkout JS URLS Key
     **/
-    const PROD_CHECKOUT_API_BASE_URL = "https://dynamic-api-checkout.nofraud.com";
-    const STAG_CHECKOUT_API_BASE_URL = "https://dynamic-api-checkout-qe2.nofraud-test.com";
-    const DEV_CHECKOUT_API_BASE_URL  = "https://dynamic-checkout-api-staging2.nofraud-test.com";
-    
-    /* 
-    * Checkout JS URLS 
-    **/
-    const PROD_API_SOURCE_JS = "https://cdn-checkout.nofraud.com/scripts/nf-src-magento.js";
-    const STAG_API_SOURCE_JS = "https://cdn-checkout-qe2.nofraud-test.com/scripts/nf-src-magento.js";
-    const DEV_API_SOURCE_JS  = "https://dynamic-checkout-test.nofraud-test.com/latest/scripts/nf-src-magento.js";
+    const API_SOURCE_JS_KEY = "js_base_url";
 
     /** 
-    * Checkout Api Refund Endpoints
-    **/
-    const PROD_REFUND_API_URL = self::PROD_CHECKOUT_API_BASE_URL."/api/v2/hooks/refund/";
-    const STAG_REFUND_API_URL = self::STAG_CHECKOUT_API_BASE_URL."/api/v2/hooks/refund/";
-    const DEV_REFUND_API_URL  = self::DEV_CHECKOUT_API_BASE_URL."/api/v2/hooks/refund/";
-
-    /** 
-    * Checkout Api Capture Endpoints
-    **/
-    const PROD_CAPTURE_API_URL = self::PROD_CHECKOUT_API_BASE_URL."/api/v2/hooks/capture/";
-    const STAG_CAPTURE_API_URL = self::STAG_CHECKOUT_API_BASE_URL."/api/v2/hooks/capture/";
-    const DEV_CAPTURE_API_URL  = self::DEV_CHECKOUT_API_BASE_URL."/api/v2/hooks/capture/";
-
-    /** 
-    * Checkout Merchat Settings Endpoints
-    **/
-    const PROD_NFAPI_MER_BASE_URL = self::PROD_CHECKOUT_API_BASE_URL."/api/v2/merchants/";
-    const STAG_NFAPI_MER_BASE_URL = self::STAG_CHECKOUT_API_BASE_URL."/api/v2/merchants/";
-    const DEV_NFAPI_MER_BASE_URL  = self::DEV_CHECKOUT_API_BASE_URL."/api/v2/merchants/";
-
-    /** 
-    * Checkout Cancel Transaction Endpoints
-    **/
-    const PROD_PORTAL_CANCEL_BASE_URL = "https://portal.nofraud.com/api/v1/transaction-update/cancel-transaction";
-    const STAG_PORTAL_CANCEL_BASE_URL = "https://portal-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
-    const DEV_PORTAL_CANCEL_BASE_URL  = "https://portal-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
+     * Checkout Cancel Transaction Key
+     **/
+    const PORTAL_CANCEL_BASE_URL_KEY = "cancel_transaction_base_url";
 
     /**
-     * Checkout Status By URL Endpoints
-    **/
-    const PROD_NFAPI_STATUS_BASE_URL = "https://api.nofraud.com/status_by_url/";
-    const STAG_NFAPI_STATUS_BASE_URL = "https://api-qe2.nofraud-test.com/status_by_url/";
-    const DEV_NFAPI_STATUS_BASE_URL  = "https://api-qe2.nofraud-test.com/status_by_url/";
+     * Checkout Status By URL Key
+     **/
+    const NFAPI_STATUS_BASE_URL_KEY = "nf_api_status_base_url";
 
     /* 
-    * Payment Button APP BASE URLS 
+    * Payment Button APP BASE URLS Key
     **/
-    const PROD_PAYMENT_APP_BASE_URL = "https://cdn-checkout.nofraud.com/";
-    const STAG_PAYMENT_APP_BASE_URL = "https://cdn-checkout-qe2.nofraud-test.com/";
-    const DEV_PAYMENT_APP_BASE_URL  = "https://dynamic-checkout-test.nofraud-test.com/latest/";
+    const PAYMENT_APP_BASE_URL_KEY = "payment_app_base_url";
 
     const ORDER_STATUSES = 'nofraud/order_statuses';
 
     public function __construct(
-		\Magento\Framework\App\Helper\Context $context,
-		\Magento\Store\Model\StoreManagerInterface $storeManager
+        Context               $context,
+        StoreManagerInterface $storeManager,
+        ResourceConnection    $resourceConnection
     ) {
-        $this->_storeManager = $storeManager;
+        $this->_storeManager      = $storeManager;
+        $this->resourceConnection = $resourceConnection;
         parent::__construct($context);
     }
 
     /**
-     * get Nofruad checkout mode
+     * get nofraud checkout enabled
      */
-    public function getNofraudAdvanceListMode()
-    {
-        return $this->scopeConfig->getValue(
-            'nofraud/advance/list_mode',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
-    }
-
-    /**
-    * get Merchant Id
-    */
-	public function getEnabled()
+    public function getEnabled()
     {
         return $this->scopeConfig->getValue(
             'nofraud/general/enabled',
@@ -116,27 +82,36 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     /**
      * get Access token not login
      */
-	public function getAccessTokenNotLogin()
+    public function getAccessTokenNotLogin()
     {
         return $this->scopeConfig->getValue(
             'nofraud/general/access_token_not_login',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     }
-	
+
     /**
-    * get API Source JS URL
-    */
-	public function getApiSourceJs()
+     * get No Fraud base url
+     */
+    public function getNfBaseUrl($dataKey)
     {
-        $checkoutMode = $this->getNofraudAdvanceListMode();
-        if( strcmp($checkoutMode,"prod") === 0 ){
-            return self::PROD_API_SOURCE_JS;
-        }elseif( strcmp($checkoutMode,"stag") === 0 ){
-            return self::STAG_API_SOURCE_JS;
-        }elseif( strcmp($checkoutMode,"dev") === 0 ) {
-            return self::DEV_API_SOURCE_JS;
-        }
+        $connection      = $this->resourceConnection->getConnection();
+        $NFCheckoutTable = $this->resourceConnection->getTableName('nofraud_checkout');
+
+        $fetchQuery = "SELECT data_value FROM `" . $NFCheckoutTable . "` WHERE `data_key` = ?";
+        $dataValue  = $connection->fetchOne($fetchQuery, [$dataKey]);
+
+        return $dataValue !== false ? $dataValue : '';
+    }
+
+    /**
+     * get API Source JS URL
+     */
+    public function getApiSourceJs()
+    {
+        $url = $this->getNfBaseUrl(self::API_SOURCE_JS_KEY);
+
+        return $url;
     }
 
     /**
@@ -144,31 +119,21 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
      */
     public function getCaptureTransactionApiUrl()
     {
-        $checkoutMode = $this->getNofraudAdvanceListMode();
-        $merchantId   = $this->getMerchantId();
-        if( strcmp($checkoutMode,"prod") === 0 ){
-            return self::PROD_CAPTURE_API_URL.$merchantId;
-        }elseif( strcmp($checkoutMode,"stag") === 0 ){
-            return self::STAG_CAPTURE_API_URL.$merchantId;
-        }elseif( strcmp($checkoutMode,"dev") === 0 ) {
-            return self::DEV_CAPTURE_API_URL.$merchantId;
-        }
+        $merchantId = $this->getMerchantId();
+        $url        = $this->getNfBaseUrl(self::CHECKOUT_API_BASE_URL_KEY) . "/api/v2/hooks/capture/$merchantId";
+
+        return $url;
     }
-	
+
     /**
-    * get Refund APi URL
-    */
+     * get Refund APi URL
+     */
     public function getRefundApiUrl()
     {
-        $checkoutMode = $this->getNofraudAdvanceListMode();
-        $merchantId   = $this->getMerchantId();
-        if( strcmp($checkoutMode,"prod") === 0 ){
-            return self::PROD_REFUND_API_URL.$merchantId;
-        }elseif( strcmp($checkoutMode,"stag") === 0 ){
-            return self::STAG_REFUND_API_URL.$merchantId;
-        }elseif( strcmp($checkoutMode,"dev") === 0 ) {
-            return self::DEV_REFUND_API_URL.$merchantId;
-        }
+        $merchantId = $this->getMerchantId();
+        $url        = $this->getNfBaseUrl(self::CHECKOUT_API_BASE_URL_KEY) . "/api/v2/hooks/refund/$merchantId";
+
+        return $url;
     }
 
     /**
@@ -176,14 +141,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
      */
     public function getCancelTransactionApiUrl()
     {
-        $checkoutMode = $this->getNofraudAdvanceListMode();
-        if( strcmp($checkoutMode,"prod") === 0 ){
-            return self::PROD_PORTAL_CANCEL_BASE_URL;
-        }elseif( strcmp($checkoutMode,"stag") === 0 ){
-            return self::STAG_PORTAL_CANCEL_BASE_URL;
-        }elseif( strcmp($checkoutMode,"dev") === 0 ) {
-            return self::DEV_PORTAL_CANCEL_BASE_URL;
-        }
+        $url = $this->getNfBaseUrl(self::PORTAL_CANCEL_BASE_URL_KEY) . "/api/v1/transaction-update/cancel-transaction";
+
+        return $url;
     }
 
     /**
@@ -191,14 +151,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
      */
     public function getStatusByUrlApiUrl()
     {
-        $checkoutMode = $this->getNofraudAdvanceListMode();
-        if( strcmp($checkoutMode,"prod") === 0 ){
-            return self::PROD_NFAPI_STATUS_BASE_URL;
-        }elseif( strcmp($checkoutMode,"stag") === 0 ){
-            return self::STAG_NFAPI_STATUS_BASE_URL;
-        }elseif( strcmp($checkoutMode,"dev") === 0 ) {
-            return self::DEV_NFAPI_STATUS_BASE_URL;
-        }
+        $url = $this->getNfBaseUrl(self::NFAPI_STATUS_BASE_URL_KEY) . "/status_by_url/";
+
+        return $url;
     }
 
     /**
@@ -206,32 +161,22 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
      */
     public function getNofraudMerSettings()
     {
-        $checkoutMode = $this->getNofraudAdvanceListMode();
-        if( strcmp($checkoutMode,"prod") === 0 ){
-            return self::PROD_NFAPI_MER_BASE_URL;
-        }elseif( strcmp($checkoutMode,"stag") === 0 ){
-            return self::STAG_NFAPI_MER_BASE_URL;
-        }elseif( strcmp($checkoutMode,"dev") === 0 ) {
-            return self::DEV_NFAPI_MER_BASE_URL;
-        }
+        $url = $this->getNfBaseUrl(self::CHECKOUT_API_BASE_URL_KEY) . "/api/v2/merchants/";
+
+        return $url;
     }
-    
+
     /**
-    * get Refund APi Key
-    */
+     * get Refund APi Key
+     */
     public function getRefundApiKey()
     {
-        /*return $this->scopeConfig->getValue(
-            'nofraud/general/api_key',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );*/
         return $this->getNofrudCheckoutAppNfToken();
     }
 
     /**
      * get Cancel Transaction nf_token
      */
-
     public function getNofrudCheckoutAppNfToken()
     {
         return $this->scopeConfig->getValue(
@@ -239,11 +184,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     }
-    
+
     /**
      * get Cancel Transaction nf_token
      */
-    
     public function getCanelTransactionNfToken()
     {
         return $this->scopeConfig->getValue(
@@ -257,11 +201,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
      */
     public function getCaptureApiKey()
     {
-        /*return $this->scopeConfig->getValue(
-            'nofraud/general/api_key',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );*/
-	return $this->getNofrudCheckoutAppNfToken();
+        return $this->getNofrudCheckoutAppNfToken();
     }
 
     /**
@@ -269,7 +209,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
      */
     public function getCustomStatusConfig($statusName, $storeId = null)
     {
-        if (!in_array($statusName,$this->orderStatusesKeys)) {
+        if (!in_array($statusName, $this->orderStatusesKeys)) {
             return;
         }
         $path = self::ORDER_STATUSES . '/' . $statusName;
@@ -285,40 +225,30 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
             return $this->scopeConfig->getValue($path);
         }
         $value = $this->scopeConfig->getValue($path, 'store', $storeId);
-        if(empty($value)){
+        if (empty($value)) {
             $value = $this->scopeConfig->getValue($path);
         }
         return $value;
     }
 
     /**
-    * get Payment Button API Source JS URL
-    */
+     * get Payment Button API Source JS URL
+     */
     public function getPaymentButtonScriptApiSourceJs()
     {
-        $checkoutMode = $this->getNofraudAdvanceListMode();
-        $merchantId   = $this->getMerchantId();
-        if (strcmp($checkoutMode, "prod") === 0) {
-            return self::PROD_CHECKOUT_API_BASE_URL."/api/v1/merchants/".$merchantId."/script.js";
-        } elseif (strcmp($checkoutMode, "stag") === 0) {
-            return self::STAG_CHECKOUT_API_BASE_URL."/api/v1/merchants/".$merchantId."/script.js";
-        } elseif (strcmp($checkoutMode, "dev") === 0) {
-            return self::DEV_CHECKOUT_API_BASE_URL."/api/v1/merchants/".$merchantId."/script.js";
-        }
+        $merchantId = $this->getMerchantId();
+        $url        = $this->getNfBaseUrl(self::CHECKOUT_API_BASE_URL_KEY) . "/api/v1/merchants/$merchantId/script.js";
+
+        return $url;
     }
 
     /**
-    * get Payment Button APP Source JS URL
-    */
+     * get Payment Button APP Source JS URL
+     */
     public function getPaymentButtonMagentoAppSourceJs()
     {
-        $checkoutMode = $this->getNofraudAdvanceListMode();
-        if (strcmp($checkoutMode, "prod") === 0) {
-            return self::PROD_PAYMENT_APP_BASE_URL . "payment-options/scripts/magento.js";
-        } elseif (strcmp($checkoutMode, "stag") === 0) {
-            return self::STAG_PAYMENT_APP_BASE_URL . "payment-options/scripts/magento.js";
-        } elseif (strcmp($checkoutMode, "dev") === 0) {
-            return self::DEV_PAYMENT_APP_BASE_URL . "payment-options/scripts/magento.js";
-        }
+        $url = $this->getNfBaseUrl(self::PAYMENT_APP_BASE_URL_KEY) . "/payment-options/scripts/magento.js";
+
+        return $url;
     }
 }

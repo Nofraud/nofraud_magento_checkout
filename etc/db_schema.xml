@@ -18,6 +18,8 @@
                 <column xsi:type="varchar" name="nofraud_checkout_status" nullable="false" length="255"
                 comment="NoFraud Checkout screened order status"/>
                 <column xsi:type="text" name="nofraudcheckout" comment="NoFraudCheckout"/>
+                <column xsi:type="varchar" name="nofraud_transaction_id" nullable="true"
+                comment="NoFraud Transaction ID"/>
         </table>
         <table name="sales_order_grid" resource="sales" engine="innodb" comment="Sales Flat Order Grid">
                 <column xsi:type="boolean" name="nofraud_checkout_screened" nullable="false" 
@@ -25,5 +27,13 @@
                 <column xsi:type="varchar" name="nofraud_checkout_status" nullable="false" length="255"
                 comment="NoFraud Checkout screened order status"/>
                 <column xsi:type="text" name="nofraudcheckout" comment="NoFraudCheckout"/>
+        </table>
+        <table name="nofraud_checkout" resource="default" engine="innodb" comment="NoFraud Checkout">
+                <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="Id"/>
+                <column xsi:type="varchar" name="data_key" nullable="true" comment="Data Key"/>
+                <column xsi:type="varchar" name="data_value" nullable="true" comment="Data Value"/>
+                <constraint xsi:type="primary" referenceId="PRIMARY">
+                        <column name="id"/>
+                </constraint>
         </table>
  </schema>
