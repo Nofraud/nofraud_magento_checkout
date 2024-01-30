@@ -84,4 +84,10 @@
             <resource ref="Apptrian_FacebookPixel::config_system"/>
         </resources>
     </route>
+	<route url="/V1/nofraudcheckout/facebook/pixel/initiateCheckout" method="POST">
+        <service class="NoFraud\Checkout\Api\FacebookPixelInterface" method="fireCheckoutEvent"/>
+        <resources>
+            <resource ref="Apptrian_FacebookPixel::config_system"/>
+        </resources>
+    </route>
 </routes>
