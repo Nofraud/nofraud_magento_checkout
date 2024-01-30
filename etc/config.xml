@@ -16,6 +16,9 @@
                 <api_refund_url></api_refund_url>
                 <api_key></api_key>
             </general>
+            <advance>
+                <list_mode>prod</list_mode>
+            </advance>
         </nofraud>
     </default>
 </config>

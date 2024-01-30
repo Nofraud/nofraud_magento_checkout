@@ -3,79 +3,85 @@
     <route url="/V1/getproductimage/:sku" method="GET">
 		<service class="NoFraud\Checkout\Api\GetProductImage" method="getProductImageUrl" />
 		<resources>
-			 <resource ref="self" />
+			<resource ref="Magento_Catalog::catalog" />
 		</resources>
 	</route>
       <route url="/V1/nofraudcheckout/updateorder" method="POST">
 		<service class="NoFraud\Checkout\Api\SetOrderAttributes" method="updateOrderAttributes" />
 		<resources>
-			 <resource ref="self" />
+			<resource ref="Magento_Sales::sales" />
 		</resources>
 	</route>
 	<route url="/V1/nofraudcheckout/initialize" method="POST">
 		<service class="NoFraud\Checkout\Api\SetConfiguration" method="enableConfiguration" />
 		<resources>
-			<resource ref="self"/>	
+			<resource ref="NoFraud_Checkout::config"/>	
 		</resources>
 	</route>
 	<route url="/V1/nofraudcheckout/validate" method="POST">
 		<service class="NoFraud\Checkout\Api\ValidateMerchantShopInterface" method="validateMerchantShop" />
 		<resources>
-			<resource ref="self"/>	
+			<resource ref="NoFraud_Checkout::config"/>
 		</resources>
 	</route>
 	<route url="/V1/nofraudcheckout/fetchstorecredit" method="POST">
         <service class="NoFraud\Checkout\Api\StoreCreditInterface" method="getstoreCreditByCustomerId"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Magento_Customer::customer"/>
         </resources>
     </route>
 	<route url="/V1/nofraudcheckout/fetchgiftcard" method="POST">
         <service class="NoFraud\Checkout\Api\GiftCardAccountRepositoryInterface" method="getCertificateDetails"/>
         <resources>
-            <resource ref="self" />
+            <resource ref="Magento_Backend::marketing" />
         </resources>
     </route>
 	<route url="/V1/nofraudcheckout/carts/gift-card/add" method="PUT">
         <service class="NoFraud\Checkout\Api\GiftCardAccountManagementInterface" method="applyGiftCardToCart"/>
         <resources>
-            <resource ref="self" />
+            <resource ref="Magento_Backend::marketing" />
         </resources>
     </route>
 	<route url="/V1/nofraudcheckout/carts/gift-card/remove" method="PUT">
         <service class="NoFraud\Checkout\Api\GiftCardAccountManagementInterface" method="removeGiftCardFromCart"/>
         <resources>
-            <resource ref="self" />
+            <resource ref="Magento_Backend::marketing" />
         </resources>
     </route>
     <route url="/V1/nofraudcheckout/paymentmode" method="POST">
 		<service class="NoFraud\Checkout\Api\SetPaymentmode" method="paymentmodeConfiguration" />
 		<resources>
-			<resource ref="self" />
+			<resource ref="NoFraud_Checkout::config" />
 		</resources>
 	</route>
 	<route url="/V1/nofraudcheckout/currency/:currencyCode" method="GET">
 		<service class="NoFraud\Checkout\Api\CurrencyInformationInterface" method="getCurrencyInformation" />
 		<resources>
-			 <resource ref="self" />
+			<resource ref="NoFraud_Checkout::config" />
 		</resources>
 	</route>
 	<route url="/V1/nofraudcheckout/fetchphonenumbermode" method="POST">
 		<service class="NoFraud\Checkout\Api\PhonenumberInterface" method="getPhonenumberMode"/>
 		<resources>
-			<resource ref="self"/>
+			<resource ref="Magento_Customer::config_customer"/>
 		</resources>
 	</route>
 	<route url="/V1/nofraudcheckout/setphonenumbermode" method="POST">
 		<service class="NoFraud\Checkout\Api\PhonenumberInterface" method="setPhonenumberMode"/>
 		<resources>
-			<resource ref="self"/>
+			<resource ref="Magento_Customer::config_customer"/>
 		</resources>
 	</route>
 	<route url="/V1/nofraudcheckout/customers/info" method="POST">
         <service class="NoFraud\Checkout\Api\CustomerInformationInterface" method="getCustomerInformation"/>
         <resources>
-            <resource ref="self"/>
+            <resource ref="Magento_Customer::customer"/>
+        </resources>
+    </route>
+	<route url="/V1/nofraudcheckout/facebook/pixel/initiateCheckout" method="POST">
+        <service class="NoFraud\Checkout\Api\FacebookPixelInterface" method="fireCheckoutEvent"/>
+        <resources>
+            <resource ref="Apptrian_FacebookPixel::config_system"/>
         </resources>
     </route>
 </routes>

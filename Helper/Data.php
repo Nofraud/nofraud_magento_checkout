@@ -53,8 +53,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper {
     * Checkout Cancel Transaction Endpoints
     **/
     const PROD_PORTAL_CANCEL_BASE_URL = "https://portal.nofraud.com/api/v1/transaction-update/cancel-transaction";
-    const STAG_PORTAL_CANCEL_BASE_URL = "https://portal-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
-    const DEV_PORTAL_CANCEL_BASE_URL  = "https://portal-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
+    const STAG_PORTAL_CANCEL_BASE_URL = "https://portal-ami-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
+    const DEV_PORTAL_CANCEL_BASE_URL  = "https://portal-ami-qe2.nofraud-test.com/api/v1/transaction-update/cancel-transaction";
 
     /**
      * Checkout Status By URL Endpoints
