@@ -84,4 +84,16 @@
             <resource ref="Apptrian_FacebookPixel::config_system"/>
         </resources>
     </route>
+	<route url="/V1/nofraudcheckout/carts/storecredit/apply" method="POST">
+		<service class="NoFraud\Checkout\Api\StoreCreditManagementInterface" method="apply"/>
+		<resources>
+			<resource ref="Magento_Customer::customer" />
+		</resources>
+	</route>
+	<route url="/V1/nofraudcheckout/carts/storecredit/cancel" method="POST">
+		<service class="NoFraud\Checkout\Api\StoreCreditManagementInterface" method="cancel"/>
+		<resources>
+			<resource ref="Magento_Customer::customer" />
+		</resources>
+	</route>
 </routes>

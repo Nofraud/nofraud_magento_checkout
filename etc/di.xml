@@ -13,6 +13,7 @@
 	<preference for="NoFraud\Checkout\Api\PhonenumberInterface" type="NoFraud\Checkout\Model\PhonenumberData" />
 	<preference for="NoFraud\Checkout\Api\CustomerInformationInterface" type="NoFraud\Checkout\Model\CustomerInformation"/>	
 	<preference for="Magento\Payment\Model\Checks\ZeroTotal" type="NoFraud\Checkout\Model\Checks\ZeroTotal" />
+	<preference for="NoFraud\Checkout\Api\StoreCreditManagementInterface" type="NoFraud\Checkout\Model\StoreCreditManagement"/>
 	<preference for="NoFraud\Checkout\Api\FacebookPixelInterface" type="NoFraud\Checkout\Model\FacebookPixelCheckoutEvent"/>
 	<preference for="Route\Route\Helper\Data" type="NoFraud\Checkout\Helper\RouteData" />
 	<type name="Magento\Quote\Api\CartRepositoryInterface">
