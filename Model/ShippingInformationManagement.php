@@ -1,5 +1,6 @@
 <?php
 namespace NoFraud\Checkout\Model;
+
 use Magento\Checkout\Api\Data\PaymentDetailsInterface;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Quote\Api\Data\AddressInterface;
@@ -27,6 +28,8 @@ class ShippingInformationManagement extends \Magento\Checkout\Model\ShippingInfo
 
         $address = $addressInformation->getShippingAddress();
         $this->validateAddress($address);
+        $this->addRegionIdToAddress($address);
+
 
         // custom code
         $currentCurrency = $quote->getQuoteCurrencyCode();
@@ -59,9 +62,9 @@ class ShippingInformationManagement extends \Magento\Checkout\Model\ShippingInfo
             $logger->info('before save : ' . $quote->getQuoteCurrencyCode());
             $this->quoteRepository->save($quote);
 
-			$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-			$_quote = $objectManager->create('Magento\Quote\Model\Quote')->load($quote->getId());
-			$_quote->setQuoteCurrencyCode($currentCurrency)->save();
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $_quote = $objectManager->create('Magento\Quote\Model\Quote')->load($quote->getId());
+            $_quote->setQuoteCurrencyCode($currentCurrency)->save();
 
         } catch (LocalizedException $e) {
             $this->logger->critical($e);
@@ -80,7 +83,8 @@ class ShippingInformationManagement extends \Magento\Checkout\Model\ShippingInfo
 
         $shippingAddress = $quote->getShippingAddress();
 
-        if (!$quote->getIsVirtual()
+        if (
+            !$quote->getIsVirtual()
             && !$shippingAddress->getShippingRateByCode($shippingAddress->getShippingMethod())
         ) {
             $errorMessage = $methodCode ?
@@ -130,5 +134,35 @@ class ShippingInformationManagement extends \Magento\Checkout\Model\ShippingInfo
         $shippingAssignment->setShipping($shipping);
         $cartExtension->setShippingAssignments([$shippingAssignment]);
         return $quote->setExtensionAttributes($cartExtension);
+    }
+
+    /**
+     * Add region id to address if it is not set
+     *
+     * @param AddressInterface $address
+     * @return void
+     */
+    private function addRegionIdToAddress(AddressInterface $address): void
+    {
+        // If region is already set, no need to set it again
+        if ($address->getRegionId()) {
+            return;
+        }
+
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $region = $objectManager->create('Magento\Directory\Model\Region');
+
+        $addressRegion = $address->getRegion();
+        $addressRegionCode = $addressRegion ? $addressRegion->getRegionCode() : null;
+
+        if ($addressRegionCode) {
+            // No need to check if the country id is set, as it is validated in the validateAddress method
+            $regionLoadResult = $region->loadByCode($addressRegionCode, $address->getCountryId());
+            $regionId = $regionLoadResult ? $regionLoadResult->getId() : null;
+
+            if ($regionId) {
+                $address->setRegionId($regionId);
+            }
+        }
     }
 }
