@@ -179,11 +179,8 @@ class OrderFraudStatus
             try {
                 if ($order && $order->getPayment()->getMethod() == 'nofraud') {
                     $transactionId = $this->getRefundTransactionId($order);
-                    $logger->info("\n transactionId ".$transactionId." <=> ".$order->getId());
                     if($transactionId !== false){
-                        $logger->info("\n Found transactionId ".$transactionId);
                         $nofraudCheckoutResponse = $this->updateTransactionStatus($transactionId, $logger);
-                        $logger->info("\n inside transactionId ".print_r($nofraudCheckoutResponse,true)); 
                         if ( $nofraudCheckoutResponse && isset($nofraudCheckoutResponse["Errors"]) ){
                             continue;
                         } elseif ( $nofraudCheckoutResponse && isset($nofraudCheckoutResponse["decision"]) ){
@@ -195,29 +192,24 @@ class OrderFraudStatus
                                 $statusName = 'error';
                                 $noFraudStatus = 'error';
                             }
-                            error_log("\n status Name ".$statusName." <=> ".$order->getId(),3,BP."/var/log/NFPstatus.log");
-                            error_log("\n status settings ".print_r($settings,true)." <=> ".$order->getId(),3,BP."/var/log/NFPstatus.log");
                             if (in_array($noFraudStatus,$this->orderStatusesKeys)) {
                                 $orderRefundedInNofraud = false;
                                 if ($noFraudStatus == "pass") {
-                                    error_log("\n inside "." <=> ".$order->getId(),3,BP."/var/log/cron_pass.log");
                                     $newStatus  =  $settings['passOrderStatus'];
                                     $newState   = $this->getStateFromStatus($newStatus);
-                                    error_log("\n status ".$newStatus." <=> ".$order->getId(),3,BP."/var/log/cron_pass.log");
-                                    error_log("\n state ".$newState." <=> ".$order->getId(),3,BP."/var/log/cron_pass.log");
                                     $order->setStatus($newStatus)->setState($newState);
                                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                     $order->save();
+                                    $logger->info("\n Status Saved ".$newStatus." <=> ".$order->getId());
                                 } else if ( $noFraudStatus == "fail" || $noFraudStatus == "fraudulent" || $noFraudStatus == "fraud" ) {
-                                    if ( isset($settings['shouldAutoRefund']) && (empty($manualCapture) || $manualCapture == false) ) {
+                                    if ( isset($settings['shouldAutoRefund']) && $settings['shouldAutoRefund'] == true && (empty($manualCapture) || $manualCapture == false) ) {
                                         $refundResponse = $this->makeRefund($order);
-                                        error_log("\n inside "." <=> ".$order->getId(),3,BP."/var/log/cron_refund.log");
-                                        error_log("\n res ".print_r($refundResponse,true)." <=> ".$order->getId(),3,BP."/var/log/cron_refund.log");
                                         if($refundResponse) {
                                             $responseArray = json_decode($refundResponse, true);
                                             if($responseArray && isset($responseArray["success"]) && $responseArray["success"] == true) {
-                                                error_log("\n success "." <=> ".$order->getId(),3,BP."/var/log/cron_refund.log");
                                                 $order->setNofraudCheckoutStatus($noFraudStatus);
+                                                $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                                 $this->createCreditMemo($order->getId());
                                                 $orderRefundedInNofraud = true;
                                                 $updateOrder      = true;
@@ -225,38 +217,39 @@ class OrderFraudStatus
                                                 continue;
                                             }
                                         } else {
-                                            error_log("\n No Response from API endpoint "." <=> ".$order->getId(),3,BP."/var/log/cron_refund.log");
+                                            $logger->info("\n No Response from API endpoint <=> ".$order->getId());
                                             continue;
                                         }
                                     }
-                                    if (isset($settings['shouldAutoCancel'])) {
+                                    if (isset($settings['shouldAutoCancel']) && $settings['shouldAutoCancel'] == true) {
                                         if (isset($settings['shouldAutoRefund']) && $settings['shouldAutoRefund'] == true && $orderRefundedInNofraud == true) {
-                                            error_log("\n inside " . " <=> " . $order->getId(), 3, BP . "/var/log/cron_cancel.log");
                                             $newState = Order::STATE_CANCELED;
                                             $order->cancel();
                                             $order->setStatus($newState)->setState($newState);
                                             error_log("\n state " . $newState . " <=> " . $order->getId(), 3, BP . "/var/log/cron_cancel.log");
+                                            $logger->info("\n Cancel Status Saved ".$newState." <=> ".$order->getId());
                                         }
                                         if (empty($settings['shouldAutoRefund']) || $settings['shouldAutoRefund'] == false) {
-                                            error_log("\n inside " . " <=> " . $order->getId(), 3, BP . "/var/log/cron_cancel.log");
                                             $newState = Order::STATE_CANCELED;
                                             $order->cancel();
                                             $order->setStatus($newState)->setState($newState);
-                                            error_log("\n state " . $newState . " <=> " . $order->getId(), 3, BP . "/var/log/cron_cancel.log");
+                                            $logger->info("\n Cancel Status Saved ".$newState." <=> ".$order->getId());
                                         }
                                     }
                                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                     $order->save();
                                 } else if ($noFraudStatus == "review") {
                                     $newStatus  =  "Pending Payment";
                                     $newState   =  "payment_review";
-                                    error_log("\n status ".$newStatus." <=> ".$order->getId(),3,BP."/var/log/cron_review.log");
                                     //$order->setStatus($newStatus)->setState($newState);
                                     $order->setNofraudCheckoutStatus($noFraudStatus);
+                                    $order->addStatusHistoryComment(__('NoFraud updated order status to ' .$noFraudStatus), false);
                                     $order->save();
+                                    $logger->info("\n Revevuew Status Saved ".$newStatus." <=> ".$order->getId());
                                 }
                             }
-                            error_log("\n Last save ".$noFraudStatus." <=> ".$order->getId(),3,BP."/var/log/NFPstatus.log");
+                            $logger->info("\n Last save ".$noFraudStatus." <=> ".$order->getId());
                         }
                     }
                 }

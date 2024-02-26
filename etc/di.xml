@@ -9,13 +9,12 @@
 	<preference for="NoFraud\Checkout\Api\StoreCreditInterface" type="NoFraud\Checkout\Model\StoreCredit"/>
 	<preference for="NoFraud\Checkout\Api\GiftCardAccountRepositoryInterface" type="NoFraud\Checkout\Model\GiftCard"/>
 	<preference for="NoFraud\Checkout\Api\GiftCardAccountManagementInterface" type="NoFraud\Checkout\Model\GiftCardAccountManagement"/>
-	<type name="Amasty\GiftCardAccount\Model\GiftCardAccount\Total\Quote\GiftCard">
-        <plugin name="NF_gift_card_plugin" type="NoFraud\Checkout\Plugin\GiftCardPlugin" sortOrder="10" />
-    </type>
 	<preference for="NoFraud\Checkout\Api\CurrencyInformationInterface" type="NoFraud\Checkout\Model\CurrencyInformation"/>
-	<!-- <type name="Magento\Checkout\Block\Checkout\AttributeMerger">
-        <plugin name="nf_checkout_phone_number_Validator" type="NoFraud\Checkout\Plugin\Block\Checkout\PhonePlugin" sortOrder="10"/>
-    </type> -->
 	<preference for="NoFraud\Checkout\Api\PhonenumberInterface" type="NoFraud\Checkout\Model\PhonenumberData" />
 	<preference for="NoFraud\Checkout\Api\CustomerInformationInterface" type="NoFraud\Checkout\Model\CustomerInformation"/>	
+	<preference for="NoFraud\Checkout\Api\FacebookPixelInterface" type="NoFraud\Checkout\Model\FacebookPixelCheckoutEvent"/>
+	<preference for="Route\Route\Helper\Data" type="NoFraud\Checkout\Helper\RouteData" />
+	<type name="Magento\Quote\Api\CartRepositoryInterface">
+		<plugin name="GiftCardQuoteExtension" type="NoFraud\Checkout\Plugin\Quote\CartRepositoryPlugin" />
+	</type>
 </config>
